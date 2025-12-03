@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Englannin harjoitussivu</title>
+<style>
+body {
+  font-family: Comic Sans MS, Arial, sans-serif;
+  background: linear-gradient(135deg,#ffefd5,#e0f7ff);
+  margin:0;
+  padding:10px;
+}
+.container {
+  max-width: 900px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 6px 30px rgba(0,0,0,0.12);
+}
+h1,h2 {
+  color:#333;
+  text-shadow:1px 1px #fff;
+}
+.card {
+  background:#f8fcff;
+  padding:18px;
+  border-radius:16px;
+  margin-bottom:18px;
+  border:3px solid #aee2ff;
+}
+.question {
+  font-size:24px;
+  font-weight:700;
+  color:#004777;
+  margin-bottom:10px;
+}
+.mc-options {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:12px;
+}
+.option {
+  padding:12px;
+  border-radius:14px;
+  border:3px solid #ccc;
+  cursor:pointer;
+  font-size:20px;
+  background:#ffffff;
+  transition:0.2s;
+  word-break: break-word;
+}
+.option:hover {
+  background:#fffae6;
+  border-color:#ffcf33;
+}
+.feedback {
+  font-size:18px;
+  font-weight:700;
+  margin-top:10px;
+  color:#222;
+}
+.correct {color:#008c2e}
+.wrong {color:#d40000}
+.score {
+  font-weight:800;
+  margin-top:14px;
+  font-size:22px;
+  color:#004777;
+}
+button {
+  padding:12px 20px;
+  border:none;
+  border-radius:14px;
+  background:#ff8da1;
+  font-weight:700;
+  cursor:pointer;
+  font-size:18px;
+  color:#fff;
+  margin-bottom:20px;
+  transition:0.2s;
+}
+button:hover {background:#ff6f88;}
+@media(max-width:600px){
+  .question{font-size:20px;}
+  .option{font-size:18px; padding:10px;}
+  button{font-size:16px; padding:10px 16px;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Englannin harjoitussivu 🎯</h1>
+<button id="newBtn">Uusi tehtävä</button>
+
+<h2>1️⃣ Have / Has - myös kielteinen ja kysyvä</h2>
+<div class="card">
+  <div id="question1" class="question">–</div>
+  <div id="options1" class="mc-options"></div>
+  <div id="feedback1" class="feedback"></div>
+</div>
+
+<h2>2️⃣ Am / Are / Is - myös kielteinen ja kysyvä</h2>
+<div class="card">
+  <div id="question2" class="question">–</div>
+  <div id="options2" class="mc-options"></div>
+  <div id="feedback2" class="feedback"></div>
+</div>
+
+<div class="score" id="score">Pisteet: 0 / 0</div>
+</div>
+
+<script>
+let score=0, attempts=0;
+
+const haveSubs=[
+  {sub:'I', has:'have', neg:"don't have", q:'Do I have', fiP:"Minulla on", fiN:"Minulla ei ole", fiQ:"Onko minulla"},
+  {sub:'you', has:'have', neg:"don't have", q:'Do you have', fiP:"Sinulla on", fiN:"Sinulla ei ole", fiQ:"Onko sinulla"},
+  {sub:'he', has:'has', neg:"does not have", q:'Does he have', fiP:"Hänellä on", fiN:"Hänellä ei ole", fiQ:"Onko hänellä"},
+  {sub:'she', has:'has', neg:"does not have", q:'Does she have', fiP:"Hänellä on", fiN:"Hänellä ei ole", fiQ:"Onko hänellä"},
+  {sub:'it', has:'has', neg:"does not have", q:'Does it have', fiP:"Sillä on", fiN:"Sillä ei ole", fiQ:"Onko sillä"},
+  {sub:'we', has:'have', neg:"do not have", q:'Do we have', fiP:"Meillä on", fiN:"Meillä ei ole", fiQ:"Onko meillä"},
+  {sub:'you', has:'have', neg:"don't have", q:'Do you have', fiP:"Teillä on", fiN:"Teillä ei ole", fiQ:"Onko teillä"},
+  {sub:'they', has:'have', neg:"do not have", q:'Do they have', fiP:"Heillä on", fiN:"Heillä ei ole", fiQ:"Onko heillä"}
+];
+
+const beSubs=[
+  {sub:'I', be:'am', neg:"am not", q:'Am I', fiP:"Minä olen", fiN:"Minä en ole", fiQ:"Olenko minä"},
+  {sub:'you', be:'are', neg:"are not", q:'Are you', fiP:"Sinä olet", fiN:"Sinä et ole", fiQ:"Oletko sinä"},
+  {sub:'he', be:'is', neg:"is not", q:'Is he', fiP:"Hän on", fiN:"Hän ei ole", fiQ:"Onko hän"},
+  {sub:'she', be:'is', neg:"is not", q:'Is she', fiP:"Hän on", fiN:"Hän ei ole", fiQ:"Onko hän"},
+  {sub:'it', be:'is', neg:"is not", q:'Is it', fiP:"Se on", fiN:"Se ei ole", fiQ:"Onko se"},
+  {sub:'we', be:'are', neg:"are not", q:'Are we', fiP:"Me olemme", fiN:"Me emme ole", fiQ:"Olemmeko me"},
+  {sub:'you', be:'are', neg:"are not", q:'Are you', fiP:"Te olette", fiN:"Te ette ole", fiQ:"Oletteko te"},
+  {sub:'they', be:'are', neg:"are not", q:'Are they', fiP:"He ovat", fiN:"He eivät ole", fiQ:"Ovatko he"}
+];
+
+const nouns=['a cat','a dog','a lion','an elephant','a tiger','a pencil','a ruler','a backpack','a notebook','an eraser'];
+const adj=['happy','tired','hungry','sad','scared'];
+
+const nounMap = {'a cat':'kissa','a dog':'koira','a lion':'leijona','an elephant':'elefantti','a tiger':'tiikeri','a pencil':'kynä','a ruler':'viivoitin','a backpack':'reppu','a notebook':'vihko','an eraser':'pyyhekumi'};
+const adjMap = { 'happy':'onnellinen','tired':'väsynyt','hungry':'nälkäinen','sad':'surullinen','scared':'pelokas' };
+
+let cur1, cur2;
+function r(a){return a[Math.floor(Math.random()*a.length)];}
+
+function makeMC(correct,optId,fbId,typeArray){
+  let opts=[...typeArray];
+  if(!opts.includes(correct)) opts.push(correct);
+  opts.sort(()=>Math.random()-0.5);
+  const d=document.getElementById(optId); d.innerHTML='';
+  opts.forEach(o=>{
+    const el=document.createElement('div'); el.className='option'; el.textContent=o;
+    el.onclick=()=>check(o,correct,fbId);
+    d.appendChild(el);
+  });
+  document.getElementById(fbId).textContent='';
+}
+
+function makeHave(){
+  const s=r(haveSubs); const noun=r(nouns); const nounFI = nounMap[noun];
+  let correct, questionText;
+  const type=Math.floor(Math.random()*3);
+  if(type===0){ correct=`${s.sub} ${s.has} ${noun}.`; questionText=`Valitse oikea lause: ${s.fiP} ${nounFI}`; }
+  else if(type===1){ correct=`${s.sub} ${s.neg} ${noun}.`; questionText=`Valitse oikea lause: ${s.fiN} ${nounFI}`; }
+  else { correct=`${s.q} ${noun}?`; questionText=`Valitse oikea lause: ${s.fiQ} ${nounFI}?`; }
+
+  cur1={c:correct,e:questionText};
+  const types=[`${s.sub} ${s.has} ${noun}.`,`${s.sub} ${s.neg} ${noun}.`,`${s.q} ${noun}?`];
+  makeMC(correct,'options1','feedback1',types);
+  document.getElementById('question1').textContent=questionText;
+}
+
+function makeBe(){
+  const s=r(beSubs); const a=r(adj); const adjFI = adjMap[a];
+  let correct, questionText;
+  const type=Math.floor(Math.random()*3);
+  if(type===0){ correct=`${s.sub} ${s.be} ${a}.`; questionText=`Valitse oikea lause: ${s.fiP} ${adjFI}`; }
+  else if(type===1){ correct=`${s.sub} ${s.neg} ${a}.`; questionText=`Valitse oikea lause: ${s.fiN} ${adjFI}`; }
+  else { correct=`${s.q} ${a}?`; questionText=`Valitse oikea lause: ${s.fiQ} ${adjFI}?`; }
+
+  cur2={c:correct,e:questionText};
+  const types=[`${s.sub} ${s.be} ${a}.`,`${s.sub} ${s.neg} ${a}.`,`${s.q} ${a}?`];
+  makeMC(correct,'options2','feedback2',types);
+  document.getElementById('question2').textContent=questionText;
+}
+
+function check(choice,correct,fbId){
+ const info=(fbId==='feedback1')?cur1:cur2;
+ attempts++;
+ if(choice===correct){ score++; document.getElementById(fbId).innerHTML=`<span class=correct>Oikein! ✔</span><br><small>${info.e}</small>`; }
+ else{ document.getElementById(fbId).innerHTML=`<span class=wrong>Väärin! ❌</span><br><small>Oikea: ${correct}<br>${info.e}</small>`; }
+ update();
+}
+
+function update(){document.getElementById('score').textContent=`Pisteet: ${score} / ${attempts}`;}
+document.getElementById('newBtn').onclick=()=>{makeHave(); makeBe();};
+makeHave(); makeBe();
+</script>
+</body>
+</html>
