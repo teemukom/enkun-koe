@@ -137,11 +137,21 @@ const beSubs=[
   {sub:'they', be:'are', neg:"are not", q:'Are they', fiP:"He ovat", fiN:"He eivät ole", fiQ:"Ovatko he"}
 ];
 
-const nouns=['a cat','a dog','a lion','an elephant','a tiger','a pencil','a ruler','a backpack','a notebook','an eraser'];
-const adj=['happy','tired','hungry','sad','scared'];
+const nouns=[
+  'a rubber','a pencil','a pen','a felt-tip pen','a ruler','a notebook','a book','a sharpener','a phone','a pencil case',
+  'crayons','scissors','a lion','a giraffe','a tiger','an elephant','a gorilla','a hippo','a zebra','a monkey',
+  'an alligator','a rhino','a parrot','a cheetah'
+];
 
-const nounMap = {'a cat':'kissa','a dog':'koira','a lion':'leijona','an elephant':'elefantti','a tiger':'tiikeri','a pencil':'kynä','a ruler':'viivoitin','a backpack':'reppu','a notebook':'vihko','an eraser':'pyyhekumi'};
-const adjMap = { 'happy':'onnellinen','tired':'väsynyt','hungry':'nälkäinen','sad':'surullinen','scared':'pelokas' };
+const adj=[
+  'small','big','short','tall','fast','slow','good','bad','young','old','happy','sad','strong','weak','hot','cold'
+];
+
+const nounMap = {
+  'a rubber':'kumityyny','a pencil':'kynä','a pen':'kynä','a felt-tip pen':'tussikynä','a ruler':'viivoitin','a notebook':'vihko','a book':'kirja','a sharpener':'teroitin','a phone':'puhelin','a pencil case':'kynäkotelo','crayons':'värikynät','scissors':'sakset','a lion':'leijona','a giraffe':'kirahvi','a tiger':'tiikeri','an elephant':'elefantti','a gorilla':'gorilla','a hippo':'virtahepo','a zebra':'seeprra','a monkey':'apina','an alligator':'alligatori','a rhino':'norsu','a parrot':'papukaija','a cheetah':'gepardi'
+};
+
+const adjMap = { 'small':'pieni','big':'iso','short':'lyhyt','tall':'pitkä','fast':'nopea','slow':'hidas','good':'hyvä','bad':'huono','young':'nuori','old':'vanha','happy':'onnellinen','sad':'surullinen','strong':'vahva','weak':'heikko','hot':'kuuma','cold':'kylmä' };
 
 let cur1, cur2;
 function r(a){return a[Math.floor(Math.random()*a.length)];}
